@@ -1,14 +1,17 @@
 # vipy
 vi but make with python. good luck trying to figure out this mess.
-```
-        __   __   __     ______   __  __  
-      /\ \ / /  /\ \   /\  == \ /\ \_\ \ 
-      \ \ \'/   \ \ \   \ \  _-/ \ \____ \ 
-       \ \__|    \ \_\   \ \_\    \/\_____\
-        \/_/      \/_/    \/_/     \/_____/
 
-```
-> see also: [buglist and checklist](DEV.md)
+<center style="border: 0px solid white;padding-top:20px;padding-bottom:20px">
+<b>Development<br>
+
+[buglist and checklist >](docs/bac.md)<br>
+[changelog >](docs/changelog.md)
+
+Guide<br>
+[requirements >](#requirements)<br>
+[installation >](#installation)
+</b>
+</center>
 
 ## Requirements
 -  Colorama
