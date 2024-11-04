@@ -17,52 +17,65 @@ from pages import Pages
 
 sys_clear = Clear()
 
-text = ""
-cursor = Back.WHITE + " " + Style.RESET_ALL
-modes = ['normal','inster','visual']
-mode = "normal"
-cmdinput = ""
-pages = Pages()
+text = "" # This is where the document text is stored
+cursor = Back.WHITE + " " + Style.RESET_ALL # The cursor indicating where you are
+modes = ['normal','inster','visual'] # All the modes. Not really used for much just here list them out
+mode = "normal" # Set the Default Mode
+cmdinput = "" # Command Mode Input Line
+pages = Pages() # All pages are stored in this variable. See more in pages.py
+version = ["0.2 alpha","11/04/24"]
 
-# Screen Redraw
+# Screen Redraw (Used for everything)
 def redraw(action,extra):
     global mode
     global text
     global cursor
     global menu
     global cmdinput
+    global version
     sys_clear.clear()
     
     # Mode Selection
-
+    # This is the little text in the top right
     if (mode == "normal"):
-        menu_mode = Fore.BLACK + Back.GREEN + "NORMAL" + Style.RESET_ALL
+        menu_mode = Fore.BLACK + Back.GREEN + " NORMAL " + Style.RESET_ALL
     if (mode == "insert"):
-        menu_mode = Fore.WHITE + Back.RED + "INSERT" + Style.RESET_ALL   
+        menu_mode = Fore.WHITE + Back.BLUE + " INSERT " + Style.RESET_ALL   
     if (mode == "command"):
         #menu_mode = Fore.WHITE + Back.BLUE + "COMMAND" + Style.RESET_ALL   
-        menu_mode = Fore.BLACK + Fore.CYAN + "COMMAND" + Style.RESET_ALL
+        menu_mode = Fore.BLACK + Fore.RED + " COMMAND " + Style.RESET_ALL
  
+    # Text to the right of the mode. Will eventually show file names
+    menu = menu_mode + "\n"
 
-    menu = menu_mode + " ViPy\n"
-
-
+    # Actions, being the first param, descirbe to function of the redraw. 
+    # Extra, contains any other information that needs to be passed on, like error handling
+    
+    # Errors
     if (action == "error"):
         print(menu_mode + " " + Fore.WHITE + Back.RED + "[ERROR] " + extra + Style.RESET_ALL + "\n")
         print(text+cursor)
 
+    # Shows pages or refreshes
     if (action == "entire"):
         if (extra == "startscreen"):
             print(menu)
             pageOutput = pages.startscreen()
             print(pageOutput)
-        elif (extra == "help"):
-            pageOutput = pages.helpscreen()
-            print(pageOutput)
-        else: 
-            print(menu)
-            print(text+cursor)
+        else:
+            if (extra == "version"):
+                print(menu_mode + Fore.LIGHTBLACK_EX + " Press any key to return to your document \n" + Style.RESET_ALL)   
+                pageOutput = Fore.GREEN + "Version " + Style.RESET_ALL + version[0] + Fore.GREEN + "\nUpdated " + Style.RESET_ALL + version[1] 
+                print(pageOutput)
+            elif (extra == "help"):
+                print(menu_mode + Fore.LIGHTBLACK_EX + " Press any key to return to your document \n" + Style.RESET_ALL)
+                pageOutput = pages.helpscreen()
+                print(pageOutput)
+            else:
+                print(menu)
+                print(text+cursor)
 
+    # Opens command mode
     if (action == "command"):
         if (extra == ""):
             cmdinput = cmdinput
@@ -74,6 +87,7 @@ def redraw(action,extra):
             cmdinput = cmdinput + str(extra)[1]
         print(":"+ cmdinput + "\n") 
     
+    # All of the following are used for insert mode
     if (action == "space"):
         print(menu)
         text = text + " ";
@@ -102,6 +116,7 @@ def on_press(key):
     if (key == keyboard.Key.alt):
         sys_clear.clear()
         quit()
+    # Return to normal mode if esc is pressed. Also clears command input.
     if (key == keyboard.Key.esc):
         mode = "normal"
         cmdinput = ""
@@ -109,12 +124,15 @@ def on_press(key):
 
     # INSERT MODE
     if (mode == "insert"):
+        # Used for other keys that are not letters
         if (key == keyboard.Key.backspace):
             redraw("delete","");
         elif (key == keyboard.Key.space):
             redraw("space","");
         elif (key == keyboard.Key.enter):
             redraw("newline","")
+        elif (key == keyboard.Key.shift):
+            pass # Hacky fix. Pressing shift prints 'e' for some reason.
         else:
             try:
                 redraw("append",key)
@@ -141,6 +159,7 @@ def on_press(key):
                 #print('Special key pressed {0}'.format(key))K
     # NORMAL MODE
     if (mode == "normal"):
+        # Keybinds for switching into different modes
         if (hasattr(key,'char')):
             if (key.char == "i"):
                 mode = "insert";
@@ -151,24 +170,39 @@ def on_press(key):
             else:
                 redraw("error","there is no function for {0} in normal mode.".format(key))
 
+# Command Mode Runner. Its called page_search because it was originally intended to open pages but other commands are passed through aswell.
 def page_search():
     global mode
     global cmdinput
+    # Changes back to normal mode, clears cmdinput, and moves it into privateinput when addressing it later.
     mode = "normal"
     privateinput = cmdinput
     cmdinput = ""
+    # Help
     if (privateinput == "help"):
         redraw("entire","help")
+    # Quit
     elif (privateinput == "q") or (privateinput == "q!") or (privateinput == "quit"):
         listener.stop()
         quit()
-
+    # Startscreen 
     elif (privateinput == "startscreen"):
         redraw("entire","startscreen")
+    elif (privateinput == "version"):
+        redraw("entire","version")
+    # Error
     else:
         redraw("error","command '" + privateinput + "' does not exist.")
 
+
+
+
+# Show start screen
 redraw("entire","startscreen")
 
-with keyboard.Listener(on_press=on_press) as listener:
+
+# Start the listener
+# surpress=true is a hacky way of preventing typing inside the terminal while in the editor. 
+# this is not a great way of doing things as it prevents multitasking but whatever.
+with keyboard.Listener(suppress=True,on_press=on_press) as listener:
     listener.join();

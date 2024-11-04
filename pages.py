@@ -31,6 +31,8 @@ class Pages:
         line.append(ol+"            > alias: !q and alt.")
         line.append(tl+"        > :startscreen")
         line.append(ol+"            > shows the logo and starting information")
+        line.append(tl+"        > :version")
+        line.append(ol+"            > shows the current version")
         output = ""
         i = 0;
         while (i<len(line)):
