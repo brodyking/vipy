@@ -9,6 +9,8 @@ vi but make with python. good luck trying to figure out this mess.
 
 </b>
 
+**NOTE:** This is in very early stages of development. Not usable yet.
+
 ## Requirements
 -  Colorama
 -  Pynput
