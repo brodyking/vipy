@@ -1,7 +1,7 @@
 # vipy
 vi but make with python. good luck trying to figure out this mess.
 
-## Requirments
+## Requirements
 -  Colorama
 -  Pynput
 -  Cursor
