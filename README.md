@@ -1,17 +1,13 @@
 # vipy
 vi but make with python. good luck trying to figure out this mess.
 
-<center style="border: 0px solid white;padding-top:20px;padding-bottom:20px">
-<b>Development<br>
+**Development**
+**[buglist and checklist ⇲](docs/bac.md) &nbsp;  [ changelog ⇲](docs/changelog.md)**
 
-[buglist and checklist >](docs/bac.md)<br>
-[changelog >](docs/changelog.md)
+**Guide**
+**[requirements ⇲](#requirements) &nbsp; [installation ⇲](#installation)**
 
-Guide<br>
-[requirements >](#requirements)<br>
-[installation >](#installation)
 </b>
-</center>
 
 ## Requirements
 -  Colorama
