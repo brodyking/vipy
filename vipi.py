@@ -13,7 +13,7 @@ import cursor
 cursor.hide()
 
 # Pages
-import pages
+from pages import Pages
 
 sys_clear = Clear()
 
@@ -22,6 +22,8 @@ cursor = Back.WHITE + " " + Style.RESET_ALL
 modes = ['normal','inster','visual']
 mode = "normal"
 cmdinput = ""
+pages = Pages()
+
 # Screen Redraw
 def redraw(action,extra):
     global mode
@@ -39,7 +41,7 @@ def redraw(action,extra):
         menu_mode = Fore.WHITE + Back.RED + "INSERT" + Style.RESET_ALL   
     if (mode == "command"):
         #menu_mode = Fore.WHITE + Back.BLUE + "COMMAND" + Style.RESET_ALL   
-        menu_mode = ""
+        menu_mode = Fore.BLACK + Fore.CYAN + "COMMAND" + Style.RESET_ALL
  
 
     menu = menu_mode + " ViPy\n"
@@ -52,15 +54,11 @@ def redraw(action,extra):
     if (action == "entire"):
         if (extra == "startscreen"):
             print(menu)
-            line0="       __   __   __     ______   __  __    \n"
-            line1="      /\ \ / /  /\ \   /\  == \ /\ \_\ \   \n"
-            line2="      \ \ \'/   \ \ \   \ \  _-/ \ \____ \  \n"
-            line3="       \ \__|    \ \_\  \ \_\    \/\_____\ \n"
-            line4="        \/_/      \/_/   \/_/     \/_____/ \n\n"
-            line5="             ViPy (c) 2024 Brody King        \n\n"
-            line6="     To get started, press : and type help.  \n"
-            welcome_msg = Fore.LIGHTBLACK_EX +line0+line1+line2+line3+line4+line5+line6+Style.RESET_ALL
-            print(welcome_msg)
+            pageOutput = pages.startscreen()
+            print(pageOutput)
+        elif (extra == "help"):
+            pageOutput = pages.helpscreen()
+            print(pageOutput)
         else: 
             print(menu)
             print(text+cursor)
@@ -72,12 +70,9 @@ def redraw(action,extra):
             cmdinput = cmdinput[:-1]
         elif (extra == "space"):
             cmdinput = cmdinput + " "
-        elif (extra == "submit"):
-            pass # TO FINISH 
         else:
             cmdinput = cmdinput + str(extra)[1]
-        print(Fore.WHITE + Back.BLUE + ":" + cmdinput + Style.RESET_ALL + "\n") 
-        print(text + cursor)
+        print(":"+ cmdinput + "\n") 
     
     if (action == "space"):
         print(menu)
@@ -129,16 +124,14 @@ def on_press(key):
                 #print('Special key pressed {0}'.format(key))K
     # COMMAND MODE
     if (mode == "command"):
-        if (key == keyboard.Key.esc):
-            cmdinput = "";
-            mode = "normal"
-            redraw("entire")
-        elif (key == keyboard.Key.backspace):
+        if (key == keyboard.Key.backspace):
             redraw("command","backspace")
         elif (key == keyboard.Key.space):
-            redraw("command","space")
+            page_search()
         elif (key == keyboard.Key.enter):
-            redraw("command","submit")
+            if (cmdinput == "quit") or (cmdinput == "q") or (cmdinput == "q!"):
+                return False
+            page_search()
         else:
             try:
                 redraw("command",key)
@@ -157,6 +150,23 @@ def on_press(key):
                 redraw("command","")
             else:
                 redraw("error","there is no function for {0} in normal mode.".format(key))
+
+def page_search():
+    global mode
+    global cmdinput
+    mode = "normal"
+    privateinput = cmdinput
+    cmdinput = ""
+    if (privateinput == "help"):
+        redraw("entire","help")
+    elif (privateinput == "q") or (privateinput == "q!") or (privateinput == "quit"):
+        listener.stop()
+        quit()
+
+    elif (privateinput == "startscreen"):
+        redraw("entire","startscreen")
+    else:
+        redraw("error","command '" + privateinput + "' does not exist.")
 
 redraw("entire","startscreen")
 
