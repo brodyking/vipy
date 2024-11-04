@@ -1,7 +1,15 @@
 # vipy
 vi but make with python. good luck trying to figure out this mess.
+```
+        __   __   __     ______   __  __  
+      /\ \ / /  /\ \   /\  == \ /\ \_\ \ 
+      \ \ \'/   \ \ \   \ \  _-/ \ \____ \ 
+       \ \__|    \ \_\   \ \_\    \/\_____\
+        \/_/      \/_/    \/_/     \/_____/
 
+```
 > see also: [buglist and checklist](DEV.md)
+
 ## Requirements
 -  Colorama
 -  Pynput
