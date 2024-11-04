@@ -1,6 +1,7 @@
 # vipy
 vi but make with python. good luck trying to figure out this mess.
 
+> see also: [buglist and checklist](DEV.md)
 ## Requirements
 -  Colorama
 -  Pynput
