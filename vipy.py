@@ -19,7 +19,7 @@ sys_clear = Clear()
 
 text = "" # This is where the document text is stored
 cursor = Back.WHITE + " " + Style.RESET_ALL # The cursor indicating where you are
-modes = ['normal','inster','visual'] # All the modes. Not really used for much just here list them out
+modes = ['normal','instert','visual','command'] # All the modes. Not really used for much just here list them out
 mode = "normal" # Set the Default Mode
 cmdinput = "" # Command Mode Input Line
 pages = Pages() # All pages are stored in this variable. See more in pages.py
@@ -43,8 +43,9 @@ def redraw(action,extra):
         menu_mode = Fore.WHITE + Back.BLUE + " INSERT " + Style.RESET_ALL   
     if (mode == "command"):
         #menu_mode = Fore.WHITE + Back.BLUE + "COMMAND" + Style.RESET_ALL   
-        menu_mode = Fore.BLACK + Fore.RED + " COMMAND " + Style.RESET_ALL
- 
+        menu_mode = ""
+    if (mode == "visual"):
+        menu_mode = Fore.WHITE + Back.RED + " VISUAL " + Style.RESET_ALL
     # Text to the right of the mode. Will eventually show file names
     menu = menu_mode + "\n"
 
@@ -55,7 +56,8 @@ def redraw(action,extra):
     if (action == "error"):
         print(menu_mode + " " + Fore.WHITE + Back.RED + "[ERROR] " + extra + Style.RESET_ALL + "\n")
         print(text+cursor)
-
+    if (action == "warn"):
+        print(menu_mode + " " + Fore.WHITE + Back.YELLOW + "[WARN] " + extra + Style.RESET_ALL + "\n")
     # Shows pages or refreshes
     if (action == "entire"):
         if (extra == "startscreen"):
@@ -131,7 +133,7 @@ def on_press(key):
             redraw("space","");
         elif (key == keyboard.Key.enter):
             redraw("newline","")
-        elif (key == keyboard.Key.shift):
+        elif (key == keyboard.Key.shift) or (key == keyboard.Key.shift_l) or (key == keyboard.Key.shift_r):
             pass # Hacky fix. Pressing shift prints 'e' for some reason.
         else:
             try:
@@ -146,6 +148,8 @@ def on_press(key):
             redraw("command","backspace")
         elif (key == keyboard.Key.space):
             page_search()
+        elif (key == keyboard.Key.shift) or (key == keyboard.Key.shift_l) or (key == keyboard.Key.shift_r):
+            pass
         elif (key == keyboard.Key.enter):
             if (cmdinput == "quit") or (cmdinput == "q") or (cmdinput == "q!"):
                 return False
@@ -164,12 +168,16 @@ def on_press(key):
             if (key.char == "i"):
                 mode = "insert";
                 redraw("entire","")
+            elif (key.char == "v"):
+                mode = "visual"
+                redraw("entire","")
             elif (key.char == ":"):
                 mode = "command"
                 redraw("command","")
             else:
                 redraw("error","there is no function for {0} in normal mode.".format(key))
-
+    if (mode == "visual"):
+        redraw("warn","visual mode has not been implemented yet.")
 # Command Mode Runner. Its called page_search because it was originally intended to open pages but other commands are passed through aswell.
 def page_search():
     global mode
